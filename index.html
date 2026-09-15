@@ -646,8 +646,8 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
 </div>
 <div class="brand-tab-panel" id="btab-products">
 <div class="brand-products-grid" id="brandProducts">
-<div class="brand-product-card" data-pdf="Y60设计实拍修图跨页.pdf" style="cursor:pointer"><img src="images/FTM5BSRDjk.jpg" alt="600×600mm 产品图册" style="width:100%;height:200px;object-fit:cover"/><div style="padding:16px"><h4 style="font-size:16px;font-weight:700;color:var(--color-primary);margin-bottom:6px">600×600mm 产品图册</h4><p style="font-size:13px;color:var(--color-text-light)">Y60 实拍+彩图目录，点击浏览完整产品系列</p></div></div>
-<div class="brand-product-card" data-pdf="Y12设计实拍修图跨页.pdf" style="cursor:pointer"><img src="images/izecBfLtCO.jpg" alt="600×1200mm 产品图册" style="width:100%;height:200px;object-fit:cover"/><div style="padding:16px"><h4 style="font-size:16px;font-weight:700;color:var(--color-primary);margin-bottom:6px">600×1200mm 产品图册</h4><p style="font-size:13px;color:var(--color-text-light)">Y120 实拍+彩图目录，点击浏览完整产品系列</p></div></div>
+<div class="brand-product-card" data-gallery="images/pdf-y60" data-pages="8" style="cursor:pointer"><img src="images/FTM5BSRDjk.jpg" alt="600×600mm 产品图册" style="width:100%;height:200px;object-fit:cover"/><div style="padding:16px"><h4 style="font-size:16px;font-weight:700;color:var(--color-primary);margin-bottom:6px">600×600mm 产品图册</h4><p style="font-size:13px;color:var(--color-text-light)">Y60 实拍+彩图目录，点击浏览完整产品系列</p></div></div>
+<div class="brand-product-card" data-gallery="images/pdf-y12" data-pages="18" style="cursor:pointer"><img src="images/izecBfLtCO.jpg" alt="600×1200mm 产品图册" style="width:100%;height:200px;object-fit:cover"/><div style="padding:16px"><h4 style="font-size:16px;font-weight:700;color:var(--color-primary);margin-bottom:6px">600×1200mm 产品图册</h4><p style="font-size:13px;color:var(--color-text-light)">Y120 实拍+彩图目录，点击浏览完整产品系列</p></div></div>
 </div>
 </div>
 </div>
@@ -700,16 +700,25 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
 </div>
 </div>
 
-<!-- PDF 预览 Modal -->
-<div class="modal" id="pdfModal">
-<div class="modal-overlay" data-pdf-close></div>
-<div class="modal-dialog" style="max-width:1200px;width:95%;height:100vh;max-height:100vh;margin:0 auto;flex-direction:column;border-radius:0">
-<button class="modal-close" data-pdf-close aria-label="关闭" style="position:absolute;top:16px;right:16px;z-index:10;background:rgba(0,0,0,.5);color:#fff;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center">
+<!-- 图片轮播 Modal -->
+<div class="modal" id="galleryModal">
+<div class="modal-overlay" data-gallery-close></div>
+<div class="modal-dialog" style="max-width:1200px;width:95%;height:90vh;max-height:90vh;margin:0 auto;flex-direction:column;border-radius:8px;overflow:hidden;background:#1a1a1a">
+<button class="modal-close" data-gallery-close aria-label="关闭" style="position:absolute;top:12px;right:12px;z-index:20;background:rgba(0,0,0,.6);color:#fff;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .3s">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 </button>
-<div style="width:100%;height:100%;flex:1;overflow:hidden"><iframe id="pdfFrame" style="width:100%;height:100%;border:none;transform:scale(1.03);transform-origin:center center" src=""></iframe></div>
+<div class="gallery-container" style="position:relative;width:100%;height:100%;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden">
+<img id="galleryImage" src="" alt="产品图册" style="max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none" draggable="false"/>
+<button class="gallery-prev" aria-label="上一页" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:10;background:rgba(0,0,0,.5);color:#fff;border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .3s;font-size:24px;line-height:1">‹</button>
+<button class="gallery-next" aria-label="下一页" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:10;background:rgba(0,0,0,.5);color:#fff;border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .3s;font-size:24px;line-height:1">›</button>
+</div>
+<div class="gallery-info" style="position:absolute;bottom:0;left:0;right:0;z-index:10;background:linear-gradient(transparent,rgba(0,0,0,.8));padding:24px 16px 14px;display:flex;align-items:center;justify-content:space-between;color:#fff">
+<span id="galleryTitle" style="font-size:14px;font-weight:500">产品图册</span>
+<span id="galleryCounter" style="font-size:13px;opacity:.8">第 1 / 8 页</span>
 </div>
 </div>
+</div>
+<style>.gallery-prev:hover,.gallery-next:hover,.modal-close:hover{background:rgba(0,0,0,.85)!important}</style>
 
 <script>
 (function(){
@@ -867,10 +876,10 @@ const brandOverviewText=document.getElementById('brandOverviewText');
 const brandOverviewImg=document.getElementById('brandOverviewImg');
 const brandAdvantages=document.getElementById('brandAdvantages');
 const brandProducts=document.getElementById('brandProducts');
-const pdfModal=document.getElementById('pdfModal');
-const pdfFrame=document.getElementById('pdfFrame');
+const galleryModal=document.getElementById('galleryModal');const galleryImage=document.getElementById('galleryImage');const galleryCounter=document.getElementById('galleryCounter');const galleryTitle=document.getElementById('galleryTitle');
+
 const brandsData={
-eagle:{name:'EAGLE',sub:'高端旗舰品牌 · 专注大规格与精雕工艺',logo:'images/brand_eagle.png',bgColor:'#0f1830',overviewImg:'images/WOewVeRjyU.jpg',positioning:'EAGLE 是万盛陶瓷旗下高端旗舰品牌，以雄鹰为象征，代表精准、力量与高远视野。品牌专注于大规格瓷砖与精雕工艺，致力于为高端家装与精品工程市场提供卓越品质的产品。',philosophy:'汲取自然与艺术的灵感，将大理石的天然纹理、木材的温润质感通过现代工艺完美复刻。每一片 EAGLE 瓷砖都是工艺与美学的结晶，为空间注入非凡气质。',market:'高端住宅、星级酒店、商业综合体、会所、精品办公空间等追求品质与设计感的场所。',advantages:[{title:'顶级原料',desc:'精选进口优质陶土原料，从源头保障产品品质与色泽稳定性。'},{title:'精雕工艺',desc:'半抛精雕等多种先进工艺，纹理细腻立体，触感温润自然。'},{title:'严苛品控',desc:'每一片瓷砖经过多道质量检测，确保尺寸精准、性能卓越。'},{title:'原创设计',desc:'专业设计团队持续研发，每款产品都有独特的设计语言。'}],products:[{title:'600×600mm 产品图册',desc:'Y60 实拍+彩图目录，点击浏览完整产品系列',img:'images/FTM5BSRDjk.jpg',pdf:'Y60设计实拍修图跨页.pdf'},{title:'600×1200mm 产品图册',desc:'Y120 实拍+彩图目录，点击浏览完整产品系列',img:'images/izecBfLtCO.jpg',pdf:'Y12设计实拍修图跨页.pdf'}]},
+eagle:{name:'EAGLE',sub:'高端旗舰品牌 · 专注大规格与精雕工艺',logo:'images/brand_eagle.png',bgColor:'#0f1830',overviewImg:'images/WOewVeRjyU.jpg',positioning:'EAGLE 是万盛陶瓷旗下高端旗舰品牌，以雄鹰为象征，代表精准、力量与高远视野。品牌专注于大规格瓷砖与精雕工艺，致力于为高端家装与精品工程市场提供卓越品质的产品。',philosophy:'汲取自然与艺术的灵感，将大理石的天然纹理、木材的温润质感通过现代工艺完美复刻。每一片 EAGLE 瓷砖都是工艺与美学的结晶，为空间注入非凡气质。',market:'高端住宅、星级酒店、商业综合体、会所、精品办公空间等追求品质与设计感的场所。',advantages:[{title:'顶级原料',desc:'精选进口优质陶土原料，从源头保障产品品质与色泽稳定性。'},{title:'精雕工艺',desc:'半抛精雕等多种先进工艺，纹理细腻立体，触感温润自然。'},{title:'严苛品控',desc:'每一片瓷砖经过多道质量检测，确保尺寸精准、性能卓越。'},{title:'原创设计',desc:'专业设计团队持续研发，每款产品都有独特的设计语言。'}],products:[{title:'600×600mm 产品图册',desc:'Y60 实拍+彩图目录，点击浏览完整产品系列',img:'images/FTM5BSRDjk.jpg',gallery:'images/pdf-y60',pages:8},{title:'600×1200mm 产品图册',desc:'Y120 实拍+彩图目录，点击浏览完整产品系列',img:'images/izecBfLtCO.jpg',gallery:'images/pdf-y12',pages:18}]},
 butterfly:{name:'BUTTERFLY',sub:'时尚潮流品牌 · 年轻化设计与丰富花色',logo:'images/brand_butterfly.png',bgColor:'#C41E3A',overviewImg:'images/product_showroom.jpg',positioning:'BUTTERFLY 是万盛陶瓷旗下时尚潮流品牌，以蝴蝶为象征，代表蜕变、多彩与灵动之美。品牌主打年轻化设计与丰富花色，致力于为现代家居空间注入时尚活力与个性表达。',philosophy:'紧跟国际家居潮流趋势，将流行色彩、几何图案与自然元素巧妙融合，通过创新釉面工艺呈现丰富的视觉层次。每一片 BUTTERFLY 瓷砖都是时尚与创意的碰撞，让空间焕发独特魅力。',market:'年轻群体住宅、时尚公寓、网红店铺、创意办公、特色餐饮等追求个性与潮流感的空间。',advantages:[{title:'潮流花色',desc:'紧跟国际家居流行趋势，每季推出新款花色，引领时尚潮流。'},{title:'创新釉面',desc:'采用创新釉面技术，呈现丰富的色彩层次与独特的视觉效果。'},{title:'快速迭代',desc:'灵活的生产线支持小批量多品种生产，快速响应市场变化。'},{title:'个性定制',desc:'支持个性化花色定制，满足年轻消费者对独特空间的追求。'}]},
 lande:{name:'LANDE',sub:'兰德 · 高性价比之选',logo:'images/brand_lande.png',bgColor:'#1a4d80',overviewImg:'images/tile_closeup.jpg',positioning:'LANDE（兰德）是万盛陶瓷旗下高性价比品牌，以稳健可靠为核心价值，代表品质、实用与亲民之选。品牌坚持以工程级品质标准打造每一片瓷砖，致力于为大众市场提供品质稳定、价格合理的优质产品。',philosophy:'以经典、耐看、实用为设计原则，精选市场长期验证的畅销花色与规格，通过规模化生产与精益管理控制成本，在保证品质的前提下提供更具竞争力的价格。每一片 LANDE 瓷砖都是品质与性价比的完美平衡。',market:'大众住宅、批量工程、出租公寓、学校医院、政府项目等注重品质稳定性与成本控制的场景。',advantages:[{title:'工程级品质',desc:'严格按照工程级标准生产，品质稳定可靠，经得起大规模使用检验。'},{title:'规模化生产',desc:'自动化大规模生产线，通过精益管理有效控制生产成本。'},{title:'经典畅销',desc:'精选市场长期验证的经典花色与规格，降低决策风险与售后成本。'},{title:'稳定供应',desc:'充足的产能与库存保障，确保大批量订单按时交付，不延误工期。'}]}
 };
@@ -885,7 +894,7 @@ brandDetailMark.style.background=data.bgColor;
 if(brandOverviewText){brandOverviewText.innerHTML='<h3>品牌定位</h3><p>'+data.positioning+'</p><h3>设计理念</h3><p>'+data.philosophy+'</p><h3>目标市场</h3><p>'+data.market+'</p>'}
 if(brandOverviewImg){brandOverviewImg.src=data.overviewImg;brandOverviewImg.alt=data.name+' 品牌产品展示'}
 if(brandAdvantages&&data.advantages){let advHtml='';data.advantages.forEach((adv,i)=>{advHtml+='<div class="brand-adv-item"><div class="brand-adv-num">0'+(i+1)+'</div><div><h4>'+adv.title+'</h4><p>'+adv.desc+'</p></div></div>'});brandAdvantages.innerHTML=advHtml}
-if(brandProducts&&data.products){let prodHtml='';data.products.forEach(prod=>{prodHtml+='<div class="brand-product-card" data-pdf="'+prod.pdf+'" style="cursor:pointer"><img src="'+prod.img+'" alt="'+prod.title+'" style="width:100%;height:200px;object-fit:cover"/><div style="padding:16px"><h4 style="font-size:16px;font-weight:700;color:var(--color-primary);margin-bottom:6px">'+prod.title+'</h4><p style="font-size:13px;color:var(--color-text-light)">'+prod.desc+'</p></div></div>'});brandProducts.innerHTML=prodHtml;brandProducts.querySelectorAll('[data-pdf]').forEach(card=>{card.addEventListener('click',()=>{openPdf(card.getAttribute('data-pdf'))})})}
+if(brandProducts&&data.products){let prodHtml='';data.products.forEach(prod=>{prodHtml+='<div class="brand-product-card" data-gallery="'+prod.gallery+'" data-pages="'+prod.pages+'" style="cursor:pointer"><img src="'+prod.img+'" alt="'+prod.title+'" style="width:100%;height:200px;object-fit:cover"/><div style="padding:16px"><h4 style="font-size:16px;font-weight:700;color:var(--color-primary);margin-bottom:6px">'+prod.title+'</h4><p style="font-size:13px;color:var(--color-text-light)">'+prod.desc+'</p></div></div>'});brandProducts.innerHTML=prodHtml;brandProducts.querySelectorAll('[data-gallery]').forEach(card=>{card.addEventListener('click',()=>{openGallery(card.getAttribute('data-gallery'),parseInt(card.getAttribute('data-pages')),card.querySelector('h4').textContent)})})}
 mainPage.style.display='none';
 brandDetail.classList.add('show');
 document.querySelector('.footer').style.display='none';
@@ -918,27 +927,53 @@ if(hash.startsWith('#brand-')){const brand=hash.replace('#brand-','');if(brandsD
 }
 initFromHash();
 
-// PDF 预览功能（使用PDF.js实现在线预览，兼容PC端和移动端）
-function openPdf(pdfUrl){
-if(!pdfModal||!pdfFrame)return;
-// 使用PDF.js viewer在线预览PDF，避免浏览器直接下载
-// PDF文件放在pdfjs/web目录下，直接用文件名
-const pdfFileName = pdfUrl.startsWith('/') ? pdfUrl.substring(1) : pdfUrl;
-const pdfViewerUrl='pdfjs/web/viewer.html?file='+encodeURIComponent(pdfFileName);
-pdfFrame.src=pdfViewerUrl;
-pdfModal.classList.add('show');
-document.body.style.overflow='hidden';
+// 图片轮播功能（高清图片轮播，彻底解决PDF渲染白线问题）
+let currentGalleryPath="",currentTotalPages=0,currentPage=1;
+function openGallery(galleryPath,totalPages,title){
+if(!galleryModal||!galleryImage)return;
+currentGalleryPath=galleryPath;currentTotalPages=totalPages;currentPage=1;
+if(galleryTitle&&title)galleryTitle.textContent=title;
+showPage(1);
+galleryModal.classList.add("show");
+document.body.style.overflow="hidden";
 }
-function closePdf(){
-if(!pdfModal||!pdfFrame)return;
-pdfModal.classList.remove('show');
-pdfFrame.src='';
-document.body.style.overflow='';
+function closeGallery(){
+if(!galleryModal)return;
+galleryModal.classList.remove("show");
+galleryImage.src="";
+document.body.style.overflow="";
 }
-if(pdfModal){
-pdfModal.querySelectorAll('[data-pdf-close]').forEach(el=>{el.addEventListener('click',closePdf)});
-pdfModal.addEventListener('click',(e)=>{if(e.target===pdfModal)closePdf()});
-document.addEventListener('keydown',(e)=>{if(e.key==='Escape'&&pdfModal.classList.contains('show'))closePdf()});
+function showPage(pageNum){
+if(pageNum<1||pageNum>currentTotalPages)return;
+currentPage=pageNum;
+const imgUrl=currentGalleryPath+"/page_"+String(pageNum).padStart(3,"0")+".jpg";
+galleryImage.src=imgUrl;
+if(galleryCounter)galleryCounter.textContent="第 "+currentPage+" / "+currentTotalPages+" 页";
+// 预加载前后页
+if(pageNum>1){const pre=new Image();pre.src=currentGalleryPath+"/page_"+String(pageNum-1).padStart(3,"0")+".jpg"}
+if(pageNum<currentTotalPages){const next=new Image();next.src=currentGalleryPath+"/page_"+String(pageNum+1).padStart(3,"0")+".jpg"}
+}
+function nextPage(){if(currentPage<currentTotalPages)showPage(currentPage+1)}
+function prevPage(){if(currentPage>1)showPage(currentPage-1)}
+if(galleryModal){
+galleryModal.querySelectorAll("[data-gallery-close]").forEach(el=>{el.addEventListener("click",closeGallery)});
+galleryModal.querySelector(".gallery-prev").addEventListener("click",prevPage);
+galleryModal.querySelector(".gallery-next").addEventListener("click",nextPage);
+galleryModal.addEventListener("click",(e)=>{if(e.target===galleryModal)closeGallery()});
+document.addEventListener("keydown",(e)=>{
+if(!galleryModal.classList.contains("show"))return;
+if(e.key==="Escape")closeGallery();
+if(e.key==="ArrowRight")nextPage();
+if(e.key==="ArrowLeft")prevPage();
+});
+// 移动端触摸滑动
+let touchStartX=0;
+galleryImage.addEventListener("touchstart",(e)=>{touchStartX=e.touches[0].clientX},{passive:true});
+galleryImage.addEventListener("touchend",(e)=>{
+const touchEndX=e.changedTouches[0].clientX;
+const diff=touchStartX-touchEndX;
+if(Math.abs(diff)>50){if(diff>0)nextPage();else prevPage()}
+},{passive:true});
 }
 
 // 品牌详情页 Tab
