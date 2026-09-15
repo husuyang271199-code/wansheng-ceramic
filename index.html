@@ -707,10 +707,16 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
 <button class="modal-close" data-gallery-close aria-label="关闭" style="position:absolute;top:12px;right:12px;z-index:20;background:rgba(0,0,0,.6);color:#fff;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .3s">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 </button>
-<div class="gallery-container" style="position:relative;width:100%;height:100%;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden">
-<img id="galleryImage" src="" alt="产品图册" style="max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none" draggable="false"/>
+<div class="gallery-container" id="galleryContainer" style="position:relative;width:100%;height:100%;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:grab">
+<img id="galleryImage" src="" alt="产品图册" style="max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;transition:transform .15s ease;transform-origin:center center" draggable="false"/>
 <button class="gallery-prev" aria-label="上一页" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:10;background:rgba(0,0,0,.5);color:#fff;border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .3s;font-size:24px;line-height:1">‹</button>
 <button class="gallery-next" aria-label="下一页" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:10;background:rgba(0,0,0,.5);color:#fff;border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .3s;font-size:24px;line-height:1">›</button>
+<div class="gallery-zoom" style="position:absolute;bottom:60px;right:16px;z-index:15;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.6);padding:6px 10px;border-radius:20px">
+<button class="zoom-out" aria-label="缩小" style="background:none;border:none;color:#fff;cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;transition:background .2s">−</button>
+<span id="zoomLevel" style="color:#fff;font-size:12px;min-width:42px;text-align:center">100%</span>
+<button class="zoom-in" aria-label="放大" style="background:none;border:none;color:#fff;cursor:pointer;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;transition:background .2s">+</button>
+<button class="zoom-reset" aria-label="重置" style="background:none;border:none;color:#fff;cursor:pointer;padding:0 8px;height:28px;border-radius:14px;font-size:11px;transition:background .2s">重置</button>
+</div>
 </div>
 <div class="gallery-info" style="position:absolute;bottom:0;left:0;right:0;z-index:10;background:linear-gradient(transparent,rgba(0,0,0,.8));padding:24px 16px 14px;display:flex;align-items:center;justify-content:space-between;color:#fff">
 <span id="galleryTitle" style="font-size:14px;font-weight:500">产品图册</span>
@@ -928,10 +934,23 @@ if(hash.startsWith('#brand-')){const brand=hash.replace('#brand-','');if(brandsD
 initFromHash();
 
 // 图片轮播功能（高清图片轮播，彻底解决PDF渲染白线问题）
+// 图片轮播功能（高清图片轮播，彻底解决PDF渲染白线问题，支持缩放拖拽）
 let currentGalleryPath="",currentTotalPages=0,currentPage=1;
+let currentScale=1,offsetX=0,offsetY=0,isDragging=false,dragStartX=0,dragStartY=0;
+const zoomLevel=document.getElementById("zoomLevel");
+const galleryContainer=document.getElementById("galleryContainer");
+function applyTransform(){
+if(!galleryImage)return;
+galleryImage.style.transform="translate("+offsetX+"px,"+offsetY+"px) scale("+currentScale+")";
+if(zoomLevel)zoomLevel.textContent=Math.round(currentScale*100)+"%";
+}
+function resetZoom(){currentScale=1;offsetX=0;offsetY=0;applyTransform();if(galleryContainer)galleryContainer.style.cursor="grab"}
+function zoomIn(){if(currentScale<5){currentScale=Math.min(5,currentScale+0.25);applyTransform()}}
+function zoomOut(){if(currentScale>0.5){currentScale=Math.max(0.5,currentScale-0.25);if(currentScale===1){offsetX=0;offsetY=0}applyTransform()}}
 function openGallery(galleryPath,totalPages,title){
 if(!galleryModal||!galleryImage)return;
 currentGalleryPath=galleryPath;currentTotalPages=totalPages;currentPage=1;
+resetZoom();
 if(galleryTitle&&title)galleryTitle.textContent=title;
 showPage(1);
 galleryModal.classList.add("show");
@@ -941,15 +960,16 @@ function closeGallery(){
 if(!galleryModal)return;
 galleryModal.classList.remove("show");
 galleryImage.src="";
+resetZoom();
 document.body.style.overflow="";
 }
 function showPage(pageNum){
 if(pageNum<1||pageNum>currentTotalPages)return;
 currentPage=pageNum;
+resetZoom();
 const imgUrl=currentGalleryPath+"/page_"+String(pageNum).padStart(3,"0")+".jpg";
 galleryImage.src=imgUrl;
 if(galleryCounter)galleryCounter.textContent="第 "+currentPage+" / "+currentTotalPages+" 页";
-// 预加载前后页
 if(pageNum>1){const pre=new Image();pre.src=currentGalleryPath+"/page_"+String(pageNum-1).padStart(3,"0")+".jpg"}
 if(pageNum<currentTotalPages){const next=new Image();next.src=currentGalleryPath+"/page_"+String(pageNum+1).padStart(3,"0")+".jpg"}
 }
@@ -959,20 +979,63 @@ if(galleryModal){
 galleryModal.querySelectorAll("[data-gallery-close]").forEach(el=>{el.addEventListener("click",closeGallery)});
 galleryModal.querySelector(".gallery-prev").addEventListener("click",prevPage);
 galleryModal.querySelector(".gallery-next").addEventListener("click",nextPage);
+galleryModal.querySelector(".zoom-in").addEventListener("click",zoomIn);
+galleryModal.querySelector(".zoom-out").addEventListener("click",zoomOut);
+galleryModal.querySelector(".zoom-reset").addEventListener("click",resetZoom);
 galleryModal.addEventListener("click",(e)=>{if(e.target===galleryModal)closeGallery()});
 document.addEventListener("keydown",(e)=>{
 if(!galleryModal.classList.contains("show"))return;
 if(e.key==="Escape")closeGallery();
 if(e.key==="ArrowRight")nextPage();
 if(e.key==="ArrowLeft")prevPage();
+if(e.key==="+"||e.key==="=")zoomIn();
+if(e.key==="-")zoomOut();
 });
-// 移动端触摸滑动
-let touchStartX=0;
-galleryImage.addEventListener("touchstart",(e)=>{touchStartX=e.touches[0].clientX},{passive:true});
+// 鼠标拖拽移动（放大后）
+galleryContainer.addEventListener("mousedown",(e)=>{
+if(currentScale<=1)return;
+isDragging=true;dragStartX=e.clientX-offsetX;dragStartY=e.clientY-offsetY;
+galleryContainer.style.cursor="grabbing";
+e.preventDefault();
+});
+document.addEventListener("mousemove",(e)=>{
+if(!isDragging)return;
+offsetX=e.clientX-dragStartX;offsetY=e.clientY-dragStartY;
+applyTransform();
+});
+document.addEventListener("mouseup",()=>{if(isDragging){isDragging=false;if(galleryContainer)galleryContainer.style.cursor=currentScale>1?"grabbing":"grab"}});
+// Ctrl+滚轮缩放
+galleryContainer.addEventListener("wheel",(e)=>{
+if(!galleryModal.classList.contains("show"))return;
+e.preventDefault();
+if(e.deltaY<0)zoomIn();else zoomOut();
+},{passive:false});
+// 双击放大/还原
+galleryImage.addEventListener("dblclick",(e)=>{
+e.preventDefault();
+if(currentScale===1){currentScale=2;applyTransform()}else{resetZoom()}
+});
+// 移动端触摸滑动翻页 + 双指缩放
+let touchStartX=0,touchStartY=0,lastTouchDist=0;
+galleryImage.addEventListener("touchstart",(e)=>{
+if(e.touches.length===1){touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY}
+if(e.touches.length===2){lastTouchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY)}
+},{passive:true});
+galleryImage.addEventListener("touchmove",(e)=>{
+if(e.touches.length===2&&lastTouchDist>0){
+const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+const ratio=dist/lastTouchDist;
+currentScale=Math.max(0.5,Math.min(5,currentScale*ratio));
+applyTransform();lastTouchDist=dist;e.preventDefault();
+}
+},{passive:false});
 galleryImage.addEventListener("touchend",(e)=>{
+if(e.changedTouches.length===1&&currentScale<=1){
 const touchEndX=e.changedTouches[0].clientX;
 const diff=touchStartX-touchEndX;
 if(Math.abs(diff)>50){if(diff>0)nextPage();else prevPage()}
+}
+lastTouchDist=0;
 },{passive:true});
 }
 
